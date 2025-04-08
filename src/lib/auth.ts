@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         data: {
           role,
           full_name: fullName,
-        } as UserMetadata,
+        },
       },
     });
 
