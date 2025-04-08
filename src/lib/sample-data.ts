@@ -147,7 +147,7 @@ const books = [
     author: "Frank Herbert",
     publication_date: "1965",
     publisher: "Chilton Books",
-    summary: "Set on the desert planet Arrakis, Dune is the story of the boy Paul Atreides, heir to a noble family tasked with ruling an inhospitable world where the only thing of value is the "spice" melange, a drug capable of extending life and enhancing consciousness. Coveted across the known universe, melange is a prize worth killing for...",
+    summary: "Set on the desert planet Arrakis, Dune is the story of the boy Paul Atreides, heir to a noble family tasked with ruling an inhospitable world where the only thing of value is the 'spice' melange, a drug capable of extending life and enhancing consciousness. Coveted across the known universe, melange is a prize worth killing for...",
     availability: "EBook,Physical,Audio",
     categories: ["Science Fiction", "Fantasy", "Classic"],
     tags: ["Space Opera", "Politics", "Ecology"]
