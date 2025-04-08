@@ -9,6 +9,7 @@ export type UserRole = 'admin' | 'librarian' | 'reader';
 
 export interface UserMetadata {
   role: UserRole;
+  full_name?: string;
 }
 
 export interface Book {
