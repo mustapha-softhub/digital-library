@@ -87,8 +87,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error;
   };
 
+  const contextValue = { 
+    user, 
+    signIn, 
+    signUp, 
+    signOut, 
+    signInWithSocial, 
+    loading 
+  };
+
   return (
-    <AuthContext.Provider value={{ user, signIn, signUp, signOut, signInWithSocial, loading }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
