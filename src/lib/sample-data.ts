@@ -157,7 +157,7 @@ const books = [
     author: "Eckhart Tolle",
     publication_date: "1997",
     publisher: "Namaste Publishing",
-    summary: "To make the journey into the Now we will need to leave our analytical mind and its false created self, the ego, behind. From the very first page of this extraordinary book, we move rapidly into a significantly higher altitude where we breathe a lighter air. We become connected to the indestructible essence of our Being, "The eternal, ever present One Life beyond the myriad forms of life that are subject to birth and death."",
+    summary: "To make the journey into the Now we will need to leave our analytical mind and its false created self, the ego, behind. From the very first page of this extraordinary book, we move rapidly into a significantly higher altitude where we breathe a lighter air. We become connected to the indestructible essence of our Being, 'The eternal, ever present One Life beyond the myriad forms of life that are subject to birth and death.'",
     availability: "EBook,Physical,Audio",
     categories: ["Non-fiction", "Spirituality", "Self-help"],
     tags: ["Mindfulness", "Presence", "Consciousness"]
@@ -177,7 +177,7 @@ const books = [
     author: "Delia Owens",
     publication_date: "2018",
     publisher: "G.P. Putnam's Sons",
-    summary: "For years, rumors of the "Marsh Girl" have haunted Barkley Cove, a quiet town on the North Carolina coast. So in late 1969, when handsome Chase Andrews is found dead, the locals immediately suspect Kya Clark, the so-called Marsh Girl. But Kya is not what they say. Sensitive and intelligent, she has survived for years alone in the marsh that she calls home, finding friends in the gulls and lessons in the sand.",
+    summary: "For years, rumors of the 'Marsh Girl' have haunted Barkley Cove, a quiet town on the North Carolina coast. So in late 1969, when handsome Chase Andrews is found dead, the locals immediately suspect Kya Clark, the so-called Marsh Girl. But Kya is not what they say. Sensitive and intelligent, she has survived for years alone in the marsh that she calls home, finding friends in the gulls and lessons in the sand.",
     availability: "EBook,Physical,Audio",
     categories: ["Fiction", "Mystery", "Coming of Age"],
     tags: ["Nature", "Isolation", "Murder Mystery"]
