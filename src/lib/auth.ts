@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from './supabase';
 import { UserMetadata } from './supabase';
 
+// Define the AuthContext type
 interface AuthContextType {
   user: any | null;
   signIn: (email: string, password: string) => Promise<any>;
@@ -13,9 +14,11 @@ interface AuthContextType {
   loading: boolean;
 }
 
+// Create the context with undefined as default value
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+// Create a provider component
+export function AuthProvider(props: { children: React.ReactNode }) {
   const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -87,22 +90,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error;
   };
 
-  const contextValue = { 
-    user, 
-    signIn, 
-    signUp, 
-    signOut, 
-    signInWithSocial, 
-    loading 
+  // Create the context value object
+  const contextValue: AuthContextType = {
+    user,
+    signIn,
+    signUp,
+    signOut,
+    signInWithSocial,
+    loading
   };
 
-  return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
+  // Return the provider component with the context value
+  return React.createElement(
+    AuthContext.Provider,
+    { value: contextValue },
+    props.children
   );
 }
 
+// Create a hook to use the auth context
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
