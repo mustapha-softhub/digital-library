@@ -1,12 +1,9 @@
-'use client';
+import React from 'react';
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { FiBook, FiHeadphones, FiTablet } from 'react-icons/fi';
-
+// Static version of the books page to avoid React not defined errors
 export default function Books() {
-  const [books, setBooks] = useState([
+  // Using static data instead of useState
+  const books = [
     {
       id: '1',
       title: 'The Great Gatsby',
@@ -71,53 +68,7 @@ export default function Books() {
       availability: 'Physical',
       cover_image: 'https://m.media-amazon.com/images/I/91Q5dCjc2KL._AC_UF1000,1000_QL80_.jpg'
     }
-  ]);
-  
-  const [filters, setFilters] = useState({
-    availability: [],
-    categories: [],
-  });
-  
-  const [showFilters, setShowFilters] = useState(false);
-
-  const toggleFilter = (type, value) => {
-    setFilters(prev => {
-      const current = [...prev[type]];
-      const index = current.indexOf(value);
-      
-      if (index === -1) {
-        current.push(value);
-      } else {
-        current.splice(index, 1);
-      }
-      
-      return {
-        ...prev,
-        [type]: current
-      };
-    });
-  };
-
-  const filteredBooks = books.filter(book => {
-    // Filter by availability
-    if (filters.availability.length > 0) {
-      const bookAvailability = book.availability.split(',');
-      const hasMatchingAvailability = filters.availability.some(filter => 
-        bookAvailability.includes(filter)
-      );
-      if (!hasMatchingAvailability) return false;
-    }
-    
-    // Filter by categories
-    if (filters.categories.length > 0) {
-      const hasMatchingCategory = filters.categories.some(category => 
-        book.categories.includes(category)
-      );
-      if (!hasMatchingCategory) return false;
-    }
-    
-    return true;
-  });
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -143,96 +94,38 @@ export default function Books() {
           <h2 className="text-xl font-semibold mb-4 text-[#0072bc]">How are you feeling today?</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {['Happy', 'Down', 'Calm', 'Stressed', 'Curious', 'Tired'].map((mood) => (
-              <button
+              <a
                 key={mood}
-                className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:border-[#8cc63f] hover:shadow-md transition-all"
+                href={`/api/mood/${mood.toLowerCase()}`}
+                className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:border-[#8cc63f] hover:shadow-md transition-all text-center"
               >
                 {mood}
-              </button>
+              </a>
             ))}
           </div>
         </div>
         
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold text-[#0072bc]">Browse Books</h2>
-          <button 
-            onClick={() => setShowFilters(!showFilters)}
+          <a 
+            href="/books?showFilters=true"
             className="flex items-center gap-2 bg-white px-4 py-2 rounded-md shadow-sm border border-gray-200"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
             </svg>
             Filters
-          </button>
+          </a>
         </div>
         
-        {showFilters && (
-          <div className="bg-white p-4 rounded-lg shadow-sm mb-6 border border-gray-200">
-            <h3 className="font-medium mb-3 text-[#0072bc]">Availability</h3>
-            <div className="flex flex-wrap gap-3 mb-4">
-              <button
-                onClick={() => toggleFilter('availability', 'Physical')}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm ${
-                  filters.availability.includes('Physical') 
-                    ? 'bg-[#0072bc] text-white' 
-                    : 'bg-gray-100 text-gray-700'
-                }`}
-              >
-                <FiBook size={14} />
-                Physical
-              </button>
-              <button
-                onClick={() => toggleFilter('availability', 'EBook')}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm ${
-                  filters.availability.includes('EBook') 
-                    ? 'bg-[#0072bc] text-white' 
-                    : 'bg-gray-100 text-gray-700'
-                }`}
-              >
-                <FiTablet size={14} />
-                E-Book
-              </button>
-              <button
-                onClick={() => toggleFilter('availability', 'Audio')}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm ${
-                  filters.availability.includes('Audio') 
-                    ? 'bg-[#0072bc] text-white' 
-                    : 'bg-gray-100 text-gray-700'
-                }`}
-              >
-                <FiHeadphones size={14} />
-                Audio
-              </button>
-            </div>
-            
-            <h3 className="font-medium mb-3 text-[#0072bc]">Categories</h3>
-            <div className="flex flex-wrap gap-3">
-              {['Fiction', 'Non-fiction', 'Fantasy', 'Science Fiction', 'Mystery', 'Self-help'].map(category => (
-                <button
-                  key={category}
-                  onClick={() => toggleFilter('categories', category)}
-                  className={`px-3 py-1.5 rounded-full text-sm ${
-                    filters.categories.includes(category) 
-                      ? 'bg-[#0072bc] text-white' 
-                      : 'bg-gray-100 text-gray-700'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-        
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredBooks.map(book => (
-            <Link href={`/books/${book.id}`} key={book.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+          {books.map(book => (
+            <a href={`/books/${book.id}`} key={book.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
               <div className="h-48 relative">
-                <Image
+                <img
                   src={book.cover_image}
                   alt={book.title}
-                  fill
-                  className="object-cover"
+                  className="w-full h-full object-cover"
                 />
               </div>
               <div className="p-4">
@@ -262,10 +155,18 @@ export default function Books() {
                   ))}
                 </div>
               </div>
-            </Link>
+            </a>
           ))}
         </div>
       </div>
     </div>
   );
 }
+
+// Force static generation and disable all client-side features
+export const dynamic = 'force-static';
+export const runtime = 'nodejs';
+export const revalidate = false;
+export const fetchCache = 'force-no-store';
+export const preferredRegion = 'auto';
+export const maxDuration = 5;
