@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { LoginForm } from '@/components/auth/LoginForm';
 
@@ -81,3 +81,6 @@ export default function RegisterPage() {
     </div>
   );
 }
+
+// This ensures the page doesn't have issues during static rendering
+export const dynamic = 'force-static';
