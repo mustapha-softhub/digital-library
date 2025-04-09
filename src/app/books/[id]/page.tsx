@@ -4,12 +4,15 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FiArrowLeft } from 'react-icons/fi';
+import { useAuth } from '@/lib/auth';
 
 export default function BookDetails({ params }: { params: { id: string } }) {
+  const { user, loading } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [chatMessage, setChatMessage] = useState('');
   const [chatHistory, setChatHistory] = useState<{role: string, content: string, timestamp?: string}[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [authError, setAuthError] = useState(false);
   const [book, setBook] = useState({
     id: params.id,
     title: 'The Great Gatsby',
@@ -28,6 +31,9 @@ export default function BookDetails({ params }: { params: { id: string } }) {
   // Fetch chat history when component mounts
   useEffect(() => {
     const fetchChatHistory = async () => {
+      // Only fetch chat history if user is authenticated
+      if (!user || loading) return;
+      
       try {
         const response = await fetch(`/api/chat/${params.id}`);
         if (response.ok) {
@@ -39,6 +45,10 @@ export default function BookDetails({ params }: { params: { id: string } }) {
               timestamp: msg.timestamp
             })));
           }
+        } else if (response.status === 401) {
+          // Handle unauthorized error
+          setAuthError(true);
+          console.error('Authentication error: User not authorized to access chat history');
         }
       } catch (error) {
         console.error('Error fetching chat history:', error);
@@ -46,11 +56,21 @@ export default function BookDetails({ params }: { params: { id: string } }) {
     };
 
     fetchChatHistory();
-  }, [params.id]);
+  }, [params.id, user, loading]);
 
   const handleChatSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatMessage.trim()) return;
+    
+    // Check if user is authenticated
+    if (!user) {
+      setAuthError(true);
+      setChatHistory(prev => [...prev, { 
+        role: 'assistant', 
+        content: 'Please log in to use the chat feature.' 
+      }]);
+      return;
+    }
 
     const userMessage = { role: 'user', content: chatMessage };
     setChatHistory(prev => [...prev, userMessage]);
@@ -78,8 +98,18 @@ export default function BookDetails({ params }: { params: { id: string } }) {
           };
           setChatHistory(prev => [...prev, aiResponse]);
         }
+      } else if (response.status === 401) {
+        // Handle unauthorized error
+        setAuthError(true);
+        console.error('Authentication error: User not authorized to use chat');
+        
+        // Add error message to chat history
+        setChatHistory(prev => [...prev, { 
+          role: 'assistant', 
+          content: 'Please log in to use the chat feature.' 
+        }]);
       } else {
-        // Handle error response
+        // Handle other error responses
         const errorData = await response.json();
         console.error('Error from chat API:', errorData);
         
@@ -213,6 +243,13 @@ export default function BookDetails({ params }: { params: { id: string } }) {
               
               {activeTab === 'chat' && (
                 <div>
+                  {!user && !loading && (
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4 text-amber-800">
+                      <p className="font-medium">Authentication Required</p>
+                      <p className="text-sm mt-1">Please <Link href="/auth/login" className="text-[#0072bc] underline">log in</Link> to use the chat feature.</p>
+                    </div>
+                  )}
+                  
                   <div className="bg-gray-50 rounded-lg p-4 h-64 overflow-y-auto mb-4">
                     {chatHistory.length === 0 ? (
                       <div className="text-center text-gray-500 mt-10">
@@ -257,14 +294,14 @@ export default function BookDetails({ params }: { params: { id: string } }) {
                       type="text"
                       value={chatMessage}
                       onChange={(e) => setChatMessage(e.target.value)}
-                      placeholder="Ask about this book..."
+                      placeholder={user ? "Ask about this book..." : "Please log in to chat"}
                       className="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0072bc]"
-                      disabled={isLoading}
+                      disabled={isLoading || !user || loading}
                     />
                     <button
                       type="submit"
                       className="bg-[#8cc63f] text-white px-4 py-2 rounded-lg hover:bg-[#7ab52e] disabled:opacity-50"
-                      disabled={isLoading || !chatMessage.trim()}
+                      disabled={isLoading || !chatMessage.trim() || !user || loading}
                     >
                       Send
                     </button>
