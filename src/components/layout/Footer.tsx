@@ -1,3 +1,4 @@
+import React from 'react';
 import Link from 'next/link';
 import { FiMail, FiPhone, FiMapPin, FiTwitter, FiInstagram, FiFacebook } from 'react-icons/fi';
 
