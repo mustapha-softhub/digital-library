@@ -14,6 +14,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // Configure React for compatibility
+  reactStrictMode: true,
+  swcMinify: false, // Disable SWC minification to use Babel instead
 };
 
 module.exports = nextConfig;
