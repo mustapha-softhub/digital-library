@@ -12,7 +12,9 @@
   ],
   "plugins": [
     ["@babel/plugin-transform-runtime", {
-      "regenerator": true
+      "regenerator": true,
+      "helpers": true,
+      "useESModules": true
     }]
   ]
 }
