@@ -81,3 +81,6 @@ export default function LoginPage() {
     </div>
   );
 }
+
+// This ensures the page doesn't have issues during static rendering
+export const dynamic = 'force-static';
