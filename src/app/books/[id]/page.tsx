@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FiArrowLeft } from 'react-icons/fi';
@@ -8,11 +8,9 @@ import { FiArrowLeft } from 'react-icons/fi';
 export default function BookDetails({ params }: { params: { id: string } }) {
   const [activeTab, setActiveTab] = useState('overview');
   const [chatMessage, setChatMessage] = useState('');
-  const [chatHistory, setChatHistory] = useState<{role: string, content: string}[]>([]);
+  const [chatHistory, setChatHistory] = useState<{role: string, content: string, timestamp?: string}[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
-  // Mock book data - in a real app, this would come from the database
-  const book = {
+  const [book, setBook] = useState({
     id: params.id,
     title: 'The Great Gatsby',
     author: 'F. Scott Fitzgerald',
@@ -25,7 +23,30 @@ export default function BookDetails({ params }: { params: { id: string } }) {
     pages: 218,
     language: 'English',
     isbn: '9780743273565'
-  };
+  });
+
+  // Fetch chat history when component mounts
+  useEffect(() => {
+    const fetchChatHistory = async () => {
+      try {
+        const response = await fetch(`/api/chat/${params.id}`);
+        if (response.ok) {
+          const messages = await response.json();
+          if (Array.isArray(messages) && messages.length > 0) {
+            setChatHistory(messages.map(msg => ({
+              role: msg.role,
+              content: msg.content,
+              timestamp: msg.timestamp
+            })));
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching chat history:', error);
+      }
+    };
+
+    fetchChatHistory();
+  }, [params.id]);
 
   const handleChatSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,15 +57,49 @@ export default function BookDetails({ params }: { params: { id: string } }) {
     setChatMessage('');
     setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse = { 
+    try {
+      // Call the API endpoint for chat
+      const response = await fetch(`/api/chat/${params.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: chatMessage }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Add the AI response to chat history
+        if (data.assistantMessage) {
+          const aiResponse = { 
+            role: 'assistant', 
+            content: data.assistantMessage.content,
+            timestamp: data.assistantMessage.timestamp
+          };
+          setChatHistory(prev => [...prev, aiResponse]);
+        }
+      } else {
+        // Handle error response
+        const errorData = await response.json();
+        console.error('Error from chat API:', errorData);
+        
+        // Add error message to chat history
+        setChatHistory(prev => [...prev, { 
+          role: 'assistant', 
+          content: 'Sorry, I encountered an error. Please try again later.' 
+        }]);
+      }
+    } catch (error) {
+      console.error('Error sending chat message:', error);
+      
+      // Add error message to chat history
+      setChatHistory(prev => [...prev, { 
         role: 'assistant', 
-        content: `I'd be happy to discuss "${book.title}" by ${book.author}. This classic novel explores themes of wealth, love, and the American Dream. What specific aspects would you like to know more about?` 
-      };
-      setChatHistory(prev => [...prev, aiResponse]);
+        content: 'Sorry, I encountered an error. Please try again later.' 
+      }]);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
