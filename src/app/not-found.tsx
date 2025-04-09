@@ -11,7 +11,7 @@ export default function NotFound() {
           The page you are looking for doesn't exist or has been moved.
         </p>
         <Link 
-          href="/" 
+          href="/"
           className="inline-block bg-[#8cc63f] text-white px-6 py-3 rounded-lg hover:bg-[#7ab52e]"
         >
           Return to Home
@@ -20,3 +20,6 @@ export default function NotFound() {
     </div>
   );
 }
+
+// This ensures the page doesn't try to use URL during static rendering
+export const dynamic = 'force-static';
